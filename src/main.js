@@ -1,19 +1,30 @@
 "use strict";
 
+const inputCardEl = document.querySelector('.input_card');
+const quantityEl = document.querySelector('.quantityCards');
+const ascCheckboxEl = document.querySelector('.asc');
+const generatedCardsEl = document.querySelector('.generated_cards');
+const copyBtnEl = document.querySelector('.copy_btn');
+const generateBtnEl = document.querySelector('.generate_cards');
+const selectMonthEl = document.querySelector('.selectMonth');
+const selectYearEl = document.querySelector('.selectYear');
+const checkboxDateEl = document.querySelector('.chkbxDateCard');
+const chkbxCodeCardEl = document.querySelector('.chkbxCodeCard');
+const inputCodeEl = document.querySelector('.inputCode');
+
+function digitsOf(n) {
+  return n.split('').map(Number);
+}
+
+function sumArr(arr) {
+  return arr.reduce((a, b) => a + b, 0);
+}
+
 function luhnChecksum(card) {
-  function digitsOf(n) {
-    return n.split('').map(Number);
-  }
+  const digits = digitsOf(card);
+  const oddDigits = [];
+  const evenDigits = [];
 
-  function sumArr(arr) {
-    return arr.reduce((a, b) => a + b, 0);
-  }
-
-  let digits = digitsOf(card);
-  let oddDigits = [];
-  let evenDigits = [];
-
-  // Separar los dígitos en posiciones pares e impares
   for (let i = 0; i < digits.length; i++) {
     if ((digits.length - i) % 2 === 0) {
       evenDigits.push(digits[i]);
@@ -22,8 +33,7 @@ function luhnChecksum(card) {
     }
   }
 
-  let checksum = 0;
-  checksum += sumArr(oddDigits);
+  let checksum = sumArr(oddDigits);
 
   evenDigits.forEach(digit => {
     let double = digit * 2;
@@ -40,148 +50,188 @@ function isLuhnValid(card) {
   return luhnChecksum(card) === 0;
 }
 
-function ascCards(card) {
-  let cards = [];
-  let x = 0;
+function ranRange(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 
-  for (let i = 0; i < card.length; i++) {
-    if (card[i] === "x") {
-      x += 1;
+function hasInvalidPattern(value) {
+  return /[^0-9x]/i.test(value);
+}
+
+function getPatternCount(card) {
+  return [...card].filter(char => char === 'x').length;
+}
+
+function formatDateSuffix() {
+  if (!checkboxDateEl.checked) {
+    return '';
+  }
+
+  const month = selectMonthEl.value === 'Random'
+    ? ranRange(1, 12).toString().padStart(2, '0')
+    : selectMonthEl.value.padStart(2, '0');
+
+  const year = selectYearEl.value === 'Random'
+    ? ranRange(2026, 2035).toString()
+    : selectYearEl.value;
+
+  return `|${month}|${year}`;
+}
+
+function formatCodeSuffix() {
+  if (!chkbxCodeCardEl.checked) {
+    return '';
+  }
+
+  const code = inputCodeEl.value.trim();
+  return code === '' ? `|${ranRange(100, 999).toString().padStart(3, '0')}` : `|${code}`;
+}
+
+function fillPattern(card, replacement) {
+  let filled = card;
+  for (const digit of replacement) {
+    filled = filled.replace(/x/, digit);
+  }
+  return filled;
+}
+
+function randomCard(card) {
+  const xCount = getPatternCount(card);
+  if (xCount === 0) {
+    return card;
+  }
+
+  const max = 10 ** xCount;
+  let generated = '';
+
+  while (generated.length === 0) {
+    const replacement = ranRange(0, max - 1).toString().padStart(xCount, '0');
+    const candidate = fillPattern(card, replacement);
+    if (isLuhnValid(candidate)) {
+      generated = candidate;
     }
   }
 
-  let n = 10 ** x;
+  return generated;
+}
 
-  if (x < 6) {
-    let month = "";
-    let year = "";
-    const checkboxDate = document.querySelector('.chkbxDateCard');
-    const selectMonth = document.querySelector('.selectMonth');
-    const selectYear = document.querySelector('.selectYear');
+function randomCardQuantity(card, quantity) {
+  let result = '';
 
-    if (checkboxDate.checked) {
-      if (selectMonth.value === "Random") {
-        month = "|" + ranRange(1, 12).toString().padStart(2, 0);
-      } else {
-        month = "|" + selectMonth.value.toString().padStart(2, 0);
-      }
+  for (let i = 0; i < quantity; i++) {
+    const dateSuffix = formatDateSuffix();
+    const codeSuffix = formatCodeSuffix();
+    result += `${randomCard(card)}${dateSuffix}${codeSuffix}\n`;
+  }
 
-      if (selectYear.value === "Random") {
-        year = "|" + ranRange(2022, 2030).toString();
-      } else {
-        year = "|" + selectYear.value.toString();
-      }
-    }
+  return result;
+}
 
-    for (let i = 0; i < n; i++) {
-      let cardFilled = card;
-      let digitsreplacer = i.toString().padStart(x, 0);
+function ascCards(card) {
+  const xCount = getPatternCount(card);
+  if (xCount === 0 || xCount > 6) {
+    return [];
+  }
 
-      for (let c of digitsreplacer) {
-        cardFilled = cardFilled.replace(/x/, c);
-      }
+  const cards = [];
+  const dateSuffix = formatDateSuffix();
+  const max = 10 ** xCount;
 
-      if (isLuhnValid(cardFilled)) {
-        cards.push(cardFilled + month + year);
-      }
+  for (let i = 0; i < max; i++) {
+    const replacement = i.toString().padStart(xCount, '0');
+    const candidate = fillPattern(card, replacement);
+    if (isLuhnValid(candidate)) {
+      cards.push(`${candidate}${dateSuffix}`);
     }
   }
 
   return cards;
 }
 
-function ranRange(min, max) {
-  return Math.floor(Math.random() * (max - min) + min);
+function showAlert(message) {
+  alert(message);
 }
 
-function randomCard(card) {
-  let x = 0;
-
-  for (let i = 0; i < card.length; i++) {
-    if (card[i] === "x") {
-      x += 1;
-    }
+function padCardInput() {
+  const value = inputCardEl.value.trim().toLowerCase();
+  if (value.length < 4 || hasInvalidPattern(value)) {
+    return;
   }
 
-  let n = 10 ** x;
-  let cardGenerated = "";
-
-  do {
-    let cardFilled = card;
-    let digitsreplacer = ranRange(0, n).toString().padStart(x, 0);
-
-    for (let c of digitsreplacer) {
-      cardFilled = cardFilled.replace(/x/, c);
-    }
-
-    if (isLuhnValid(cardFilled)) {
-      cardGenerated = cardFilled;
-    }
-  } while (cardGenerated.length === 0);
-
-  return cardGenerated;
-}
-
-function randomCardQuantity(card, quantity) {
-  let textWithCards = "";
-  let month = "";
-  let year = "";
-  let code = "";
-  const checkboxDate = document.querySelector('.chkbxDateCard');
-  const selectMonth = document.querySelector('.selectMonth');
-  const selectYear = document.querySelector('.selectYear');
-  const chkbxCodeCard = document.querySelector('.chkbxCodeCard');
-  let inputCode = document.querySelector('.inputCode');
-
-  for (let i = 0; i < quantity; i++) {
-    if (checkboxDate.checked) {
-      if (selectMonth.value === "Random") {
-        month = "|" + ranRange(1, 12).toString().padStart(2, 0);
-      } else {
-        month = "|" + selectMonth.value.toString().padStart(2, 0);
-      }
-
-      if (selectYear.value === "Random") {
-        year = "|" + ranRange(2022, 2030).toString();
-      } else {
-        year = "|" + selectYear.value.toString();
-      }
-    }
-
-    if (chkbxCodeCard.checked) {
-      if (inputCode.value.length === 0) {
-        code = "|" + ranRange(100, 999).toString().padStart(3, 0);
-      } else {
-        code = "|" + inputCode.value;
-      }
-    }
-
-    textWithCards += randomCard(card) + month + year + code + "\n";
+  const targetLength = value.charAt(0) === '3' ? 15 : 16;
+  if (value.length < targetLength) {
+    inputCardEl.value = value.padEnd(targetLength, 'x');
   }
-
-  return textWithCards;
 }
 
 function generateCards() {
-  const inputCard = document.querySelector('.input_card').value;
-  const checkboxAsc = document.querySelector('.asc');
-  const quantity = document.querySelector('.quantityCards').value;
+  const cardValue = inputCardEl.value.trim().toLowerCase();
+  const quantity = Math.max(1, Math.min(100, parseInt(quantityEl.value, 10) || 1));
 
-  if (inputCard.length > 0 && inputCard.match(/[^x+\d]/) === null && inputCard.includes("x") === true && checkboxAsc.checked === false) {
-    document.querySelector('.generated_cards').value = randomCardQuantity(inputCard, quantity);
-  } else if (checkboxAsc.checked) {
-    document.querySelector('.generated_cards').value = ascCards(inputCard).join("\n");
+  if (cardValue.length === 0) {
+    showAlert('Ingresa un patrón de tarjeta con al menos una "x".');
+    return;
   }
+
+  if (hasInvalidPattern(cardValue)) {
+    showAlert('El número de tarjeta solo puede contener dígitos y "x".');
+    return;
+  }
+
+  if (!cardValue.includes('x')) {
+    showAlert('La tarjeta debe incluir al menos una "x" para generar números válidos.');
+    return;
+  }
+
+  if (ascCheckboxEl.checked) {
+    if (getPatternCount(cardValue) > 6) {
+      showAlert('ASC soporta hasta 6 posiciones "x" para evitar listas muy grandes.');
+      return;
+    }
+
+    const cards = ascCards(cardValue);
+    if (cards.length === 0) {
+      generatedCardsEl.value = '';
+      showAlert('No se encontraron tarjetas válidas con ese patrón.');
+      return;
+    }
+
+    generatedCardsEl.value = cards.join('\n');
+    return;
+  }
+
+  generatedCardsEl.value = randomCardQuantity(cardValue, quantity);
 }
 
-document.addEventListener("click", function () {
-  const inputCardIncomplete = document.querySelector('.input_card').value;
+function copyResults() {
+  const text = generatedCardsEl.value.trim();
+  if (!text) {
+    showAlert('No hay resultados para copiar');
+    return;
+  }
 
-  if (inputCardIncomplete.length >= 4 && inputCardIncomplete.match(/[^x+\d]/) === null) {
-    if (inputCardIncomplete.charAt(0) === '3') {
-      document.querySelector('.input_card').value = inputCardIncomplete.padEnd(15, "x");
-    } else {
-      document.querySelector('.input_card').value = inputCardIncomplete.padEnd(16, "x");
-    }
+  navigator.clipboard.writeText(text).then(() => {
+    copyBtnEl.textContent = '✅ Copiado';
+    setTimeout(() => {
+      copyBtnEl.textContent = '📋 Copiar resultados';
+    }, 2000);
+  }).catch(() => {
+    generatedCardsEl.select();
+    document.execCommand('copy');
+    showAlert('Resultados copiados');
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (generateBtnEl) {
+    generateBtnEl.addEventListener('click', generateCards);
+  }
+
+  if (copyBtnEl) {
+    copyBtnEl.addEventListener('click', copyResults);
+  }
+
+  if (inputCardEl) {
+    inputCardEl.addEventListener('blur', padCardInput);
   }
 });

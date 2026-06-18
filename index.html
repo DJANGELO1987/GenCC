@@ -305,9 +305,8 @@ input[type="checkbox"]{
             </div>
 
             <button
-                type="submit"
-                class="generate_cards"
-                onclick="generateCards()">
+                type="button"
+                class="generate_cards">
                 Generar
             </button>
 
@@ -318,8 +317,8 @@ input[type="checkbox"]{
     <div class="cards-container">
 
         <button
-            class="copy_btn"
-            onclick="copyResults()">
+            type="button"
+            class="copy_btn">
             📋 Copiar resultados
         </button>
 
@@ -336,43 +335,7 @@ input[type="checkbox"]{
     Developed by: <span>@BulletPierce</span>
 </footer>
 
-<script>
-
-function copyResults() {
-
-    const textarea = document.querySelector('.generated_cards');
-
-    if (!textarea.value.trim()) {
-        alert('No hay resultados para copiar');
-        return;
-    }
-
-    navigator.clipboard.writeText(textarea.value)
-        .then(() => {
-
-            const btn = document.querySelector('.copy_btn');
-
-            btn.innerHTML = '✅ Copiado';
-
-            setTimeout(() => {
-                btn.innerHTML = '📋 Copiar resultados';
-            }, 2000);
-
-        })
-        .catch(() => {
-
-            textarea.select();
-            document.execCommand('copy');
-
-            alert('Resultados copiados');
-
-        });
-
-}
-
-</script>
-
-<script type="text/javascript" src="./src/main.js"></script>
+<script src="./src/main.js" defer></script>
 
 </body>
 </html>
