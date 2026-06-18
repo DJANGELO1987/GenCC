@@ -1,3 +1,153 @@
+// src/main.js
+document.addEventListener('DOMContentLoaded', () => {
+  const inputCard = document.querySelector('.input_card');
+  const chkbxDate = document.querySelector('.chkbxDateCard');
+  const ascCheckbox = document.querySelector('.asc');
+  const selectMonth = document.querySelector('.selectMonth');
+  const selectYear = document.querySelector('.selectYear');
+  const chkbxCode = document.querySelector('.chkbxCodeCard');
+  const inputCode = document.querySelector('.inputCode');
+  const quantityInput = document.querySelector('.quantityCards');
+  const btnGenerate = document.querySelector('.generate_cards');
+  const btnCopy = document.querySelector('.copy_btn');
+  const output = document.querySelector('.generated_cards');
+  const status = document.querySelector('.status');
+
+  function randomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  function luhnVerify(number) {
+    let sum = 0;
+    const str = String(number);
+    for (let i = 0; i < str.length; i++) {
+      let digit = parseInt(str[str.length - 1 - i], 10);
+      if (i % 2 === 1) digit *= 2;
+      if (digit > 9) digit -= 9;
+      sum += digit;
+    }
+    return sum % 10 === 0;
+  }
+
+  function luhnCheckDigit(prefix) {
+    for (let d = 0; d <= 9; d++) {
+      if (luhnVerify(prefix + d)) return String(d);
+    }
+    return '0';
+  }
+
+  function generateCardNumber(prefix = '', length = 16) {
+    prefix = String(prefix).replace(/\s+/g, '');
+    let base = prefix.slice(0, length - 1);
+    while (base.length < length - 1) base += String(randomInt(0, 9));
+    const check = luhnCheckDigit(base);
+    return base + check;
+  }
+
+  function pad2(n) { return String(n).padStart(2, '0'); }
+
+  function addMonths(month, year, offset) {
+    const total = (Number(year) * 12 + Number(month) - 1) + offset;
+    const newYear = Math.floor(total / 12);
+    const newMonth = (total % 12) + 1;
+    return { month: pad2(newMonth), year: String(newYear) };
+  }
+
+  btnGenerate.addEventListener('click', () => {
+    const prefix = inputCard.value.trim();
+    const includeDate = chkbxDate.checked;
+    const asc = ascCheckbox.checked;
+    const includeCvv = chkbxCode.checked;
+    const codeValue = inputCode.value.trim();
+    let qty = parseInt(quantityInput.value, 10);
+    if (!Number.isFinite(qty) || qty <= 0) {
+      status.textContent = 'Cantidad inválida, usando 5 por defecto.';
+      qty = 5;
+    }
+    if (qty > 500) {
+      status.textContent = 'Máx 500 — ajustando a 500.';
+      qty = 500;
+    }
+
+    // small UX: disable buttons while generating
+    btnGenerate.disabled = true;
+    btnCopy.disabled = true;
+    status.textContent = 'Generando...';
+
+    const monthOption = selectMonth.value;
+    const yearOption = selectYear.value;
+
+    const results = [];
+
+    for (let i = 0; i < qty; i++) {
+      const card = generateCardNumber(prefix, 16);
+
+      let dateStr = '';
+      if (includeDate) {
+        let mm, yy;
+        if (monthOption === 'Random' || yearOption === 'Random') {
+          // random month/year independently
+          const randMonth = monthOption === 'Random' ? pad2(randomInt(1, 12)) : monthOption;
+          const randYear = yearOption === 'Random' ? String(randomInt(2026, 2035)) : yearOption;
+          mm = randMonth; yy = randYear;
+        } else {
+          // both specified or fixed; if ASC, increment
+          if (asc) {
+            const dt = addMonths(monthOption, yearOption, i);
+            mm = dt.month; yy = dt.year;
+          } else {
+            mm = monthOption; yy = yearOption;
+          }
+        }
+        // format yy as two digits
+        dateStr = `${mm}/${String(yy).slice(-2)}`;
+      }
+
+      let cvv = '';
+      if (includeCvv) {
+        if (!codeValue || codeValue.toLowerCase() === 'random') {
+          cvv = String(randomInt(0, 999)).padStart(3, '0');
+        } else {
+          cvv = codeValue;
+        }
+      }
+
+      // final format: CARD | MM/YY | CVV (omit parts if disabled)
+      const parts = [card];
+      if (dateStr) parts.push(dateStr);
+      if (cvv) parts.push(cvv);
+      results.push(parts.join(' | '));
+    }
+
+    output.value = results.join('\n');
+    output.scrollTop = 0;
+    status.textContent = `Generadas ${results.length} tarjetas.`;
+    btnGenerate.disabled = false;
+    btnCopy.disabled = false;
+  });
+
+  btnCopy.addEventListener('click', async () => {
+    try {
+      const text = output.value;
+      if (!text) return;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        // fallback
+        output.select();
+        document.execCommand('copy');
+        window.getSelection()?.removeAllRanges();
+      }
+      const original = btnCopy.textContent;
+      btnCopy.textContent = '✅ Copiado';
+      status.textContent = 'Resultados copiados al portapapeles.';
+      setTimeout(() => { btnCopy.textContent = original; status.textContent = ''; }, 1400);
+    } catch (e) {
+      console.error('Copy failed', e);
+      status.textContent = 'No se pudo copiar automáticamente. Selecciona y copia manualmente.';
+    }
+  });
+});
 "use strict";
 
 const inputCardEl = document.querySelector('.input_card');

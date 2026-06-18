@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Generador Friends School Curso Python</title>
+<title>Generador Angel Peru Curso Python</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
@@ -218,7 +218,7 @@ input[type="checkbox"]{
 <body>
 
 <header class="title">
-    <h1>Generador Friends School</h1>
+    <h1>Generador Angel Peru Curso Python</h1>
     <p>Generador rápido y responsive</p>
 </header>
 
@@ -231,23 +231,24 @@ input[type="checkbox"]{
             <input
                 type="text"
                 class="input_card"
-                placeholder="4557">
+                placeholder="4557"
+                aria-label="Prefijo de tarjeta, por ejemplo 4557">
 
             <div class="card-options">
 
                 <div class="date-options">
 
                     <div class="container-date">
-                        <input type="checkbox" checked class="chkbxDateCard">
+                        <input type="checkbox" checked class="chkbxDateCard" aria-label="Incluir fecha">
                         <p>DATE</p>
 
-                        <input type="checkbox" class="asc">
+                        <input type="checkbox" class="asc" aria-label="Incrementar fecha (ASC)">
                         <p>ASC</p>
                     </div>
 
                     <div class="select-date">
 
-                        <select name="date" class="selectMonth">
+                        <select name="date" class="selectMonth" aria-label="Mes de expiración">
                             <option value="Random">Random</option>
                             <option value="01">01</option>
                             <option value="02">02</option>
@@ -263,7 +264,7 @@ input[type="checkbox"]{
                             <option value="12">12</option>
                         </select>
 
-                        <select name="year" class="selectYear">
+                        <select name="year" class="selectYear" aria-label="Año de expiración">
                             <option value="Random">Random</option>
                             <option value="2026">2026</option>
                             <option value="2027">2027</option>
@@ -284,7 +285,7 @@ input[type="checkbox"]{
                 <div class="code-quantity">
 
                     <div class="container-checkbox">
-                        <input type="checkbox" checked class="chkbxCodeCard">
+                        <input type="checkbox" checked class="chkbxCodeCard" aria-label="Incluir CVV">
                         <p>CVV</p>
                     </div>
 
@@ -292,12 +293,14 @@ input[type="checkbox"]{
                         <input
                             type="text"
                             placeholder="Random"
-                            class="inputCode">
+                            class="inputCode"
+                            aria-label="CVV o 'Random'">
 
                         <input
                             type="text"
                             value="5"
-                            class="quantityCards">
+                            class="quantityCards"
+                            aria-label="Cantidad de tarjetas a generar">
                     </div>
 
                 </div>
@@ -306,7 +309,8 @@ input[type="checkbox"]{
 
             <button
                 type="button"
-                class="generate_cards">
+                class="generate_cards"
+                aria-label="Generar tarjetas">
                 Generar
             </button>
 
@@ -316,16 +320,20 @@ input[type="checkbox"]{
 
     <div class="cards-container">
 
+        <div class="status" aria-live="polite" style="min-height:22px;margin-bottom:8px;color:#0f766e;font-weight:600;"></div>
+
         <button
             type="button"
-            class="copy_btn">
+            class="copy_btn"
+            aria-label="Copiar resultados al portapapeles">
             📋 Copiar resultados
         </button>
 
         <textarea
             name="cards"
             class="generated_cards"
-            placeholder="Los resultados aparecerán aquí..."></textarea>
+            placeholder="Los resultados aparecerán aquí..."
+            aria-label="Resultados generados"></textarea>
 
     </div>
 
