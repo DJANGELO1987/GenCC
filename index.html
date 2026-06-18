@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Generador Friends School Curso Python</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+    background:#f4f7fb;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    color:#374151;
+}
+
+.title{
+    background:#0f766e;
+    color:white;
+    text-align:center;
+    padding:25px 15px;
+    box-shadow:0 4px 15px rgba(0,0,0,.15);
+}
+
+.title h1{
+    font-size:2rem;
+    font-weight:700;
+    margin-bottom:8px;
+}
+
+.title p{
+    color:#c7f9f2;
+    font-size:.95rem;
+}
+
+.container{
+    width:100%;
+    max-width:1200px;
+    margin:auto;
+    padding:30px 20px;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:25px;
+}
+
+.options-container,
+.cards-container{
+    background:white;
+    border-radius:16px;
+    padding:25px;
+    box-shadow:0 8px 25px rgba(0,0,0,.08);
+}
+
+.input_card,
+.inputCode,
+.quantityCards,
+.selectMonth,
+.selectYear{
+    width:100%;
+    height:48px;
+    border:2px solid #d1d5db;
+    border-radius:10px;
+    padding:0 15px;
+    font-size:15px;
+    transition:.3s;
+}
+
+.input_card:focus,
+.inputCode:focus,
+.quantityCards:focus,
+.selectMonth:focus,
+.selectYear:focus{
+    outline:none;
+    border-color:#0f766e;
+}
+
+.input_card{
+    margin-bottom:20px;
+}
+
+.card-options{
+    display:flex;
+    flex-direction:column;
+    gap:20px;
+}
+
+.container-date,
+.container-checkbox{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:12px;
+    font-weight:600;
+}
+
+.select-date,
+.inputs-options{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+}
+
+.generate_cards{
+    width:100%;
+    margin-top:25px;
+    border:none;
+    background:#0f766e;
+    color:white;
+    height:52px;
+    border-radius:12px;
+    cursor:pointer;
+    font-size:16px;
+    font-weight:600;
+    transition:.3s;
+}
+
+.generate_cards:hover{
+    background:#115e59;
+}
+
+.cards-container{
+    display:flex;
+    flex-direction:column;
+}
+
+.copy_btn{
+    width:100%;
+    height:48px;
+    margin-bottom:15px;
+    border:none;
+    border-radius:12px;
+    background:#374151;
+    color:white;
+    font-size:15px;
+    font-weight:600;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.copy_btn:hover{
+    background:#1f2937;
+}
+
+.generated_cards{
+    width:100%;
+    min-height:400px;
+    border:2px solid #d1d5db;
+    border-radius:12px;
+    padding:15px;
+    resize:none;
+    font-size:14px;
+    font-weight:600;
+}
+
+.generated_cards:focus{
+    outline:none;
+    border-color:#0f766e;
+}
+
+footer{
+    text-align:center;
+    padding:20px;
+    color:#6b7280;
+    font-size:.95rem;
+    margin-top:auto;
+}
+
+footer span{
+    color:#0f766e;
+    font-weight:600;
+}
+
+input[type="checkbox"]{
+    width:18px;
+    height:18px;
+    accent-color:#0f766e;
+}
+
+@media (max-width:900px){
+
+    .container{
+        grid-template-columns:1fr;
+    }
+
+    .generated_cards{
+        min-height:300px;
+    }
+
+}
+
+@media (max-width:600px){
+
+    .title h1{
+        font-size:1.6rem;
+    }
+
+    .select-date,
+    .inputs-options{
+        grid-template-columns:1fr;
+    }
+
+}
+
+</style>
+</head>
+<body>
+
+<header class="title">
+    <h1>Generador Friends School</h1>
+    <p>Generador rápido y responsive</p>
+</header>
+
+<div class="container">
+
+    <div class="options-container">
+
+        <div class="user-options">
+
+            <input
+                type="text"
+                class="input_card"
+                placeholder="4557">
+
+            <div class="card-options">
+
+                <div class="date-options">
+
+                    <div class="container-date">
+                        <input type="checkbox" checked class="chkbxDateCard">
+                        <p>DATE</p>
+
+                        <input type="checkbox" class="asc">
+                        <p>ASC</p>
+                    </div>
+
+                    <div class="select-date">
+
+                        <select name="date" class="selectMonth">
+                            <option value="Random">Random</option>
+                            <option value="01">01</option>
+                            <option value="02">02</option>
+                            <option value="03">03</option>
+                            <option value="04">04</option>
+                            <option value="05">05</option>
+                            <option value="06">06</option>
+                            <option value="07">07</option>
+                            <option value="08">08</option>
+                            <option value="09">09</option>
+                            <option value="10">10</option>
+                            <option value="11">11</option>
+                            <option value="12">12</option>
+                        </select>
+
+                        <select name="year" class="selectYear">
+                            <option value="Random">Random</option>
+                            <option value="2026">2026</option>
+                            <option value="2027">2027</option>
+                            <option value="2028">2028</option>
+                            <option value="2029">2029</option>
+                            <option value="2030">2030</option>
+                            <option value="2031">2031</option>
+                            <option value="2032">2032</option>
+                            <option value="2033">2033</option>
+                            <option value="2034">2034</option>
+                            <option value="2035">2035</option>
+                        </select>
+
+                    </div>
+
+                </div>
+
+                <div class="code-quantity">
+
+                    <div class="container-checkbox">
+                        <input type="checkbox" checked class="chkbxCodeCard">
+                        <p>CVV</p>
+                    </div>
+
+                    <div class="inputs-options">
+                        <input
+                            type="text"
+                            placeholder="Random"
+                            class="inputCode">
+
+                        <input
+                            type="text"
+                            value="5"
+                            class="quantityCards">
+                    </div>
+
+                </div>
+
+            </div>
+
+            <button
+                type="submit"
+                class="generate_cards"
+                onclick="generateCards()">
+                Generar
+            </button>
+
+        </div>
+
+    </div>
+
+    <div class="cards-container">
+
+        <button
+            class="copy_btn"
+            onclick="copyResults()">
+            📋 Copiar resultados
+        </button>
+
+        <textarea
+            name="cards"
+            class="generated_cards"
+            placeholder="Los resultados aparecerán aquí..."></textarea>
+
+    </div>
+
+</div>
+
+<footer>
+    Developed by: <span>@BulletPierce</span>
+</footer>
+
+<script>
+
+function copyResults() {
+
+    const textarea = document.querySelector('.generated_cards');
+
+    if (!textarea.value.trim()) {
+        alert('No hay resultados para copiar');
+        return;
+    }
+
+    navigator.clipboard.writeText(textarea.value)
+        .then(() => {
+
+            const btn = document.querySelector('.copy_btn');
+
+            btn.innerHTML = '✅ Copiado';
+
+            setTimeout(() => {
+                btn.innerHTML = '📋 Copiar resultados';
+            }, 2000);
+
+        })
+        .catch(() => {
+
+            textarea.select();
+            document.execCommand('copy');
+
+            alert('Resultados copiados');
+
+        });
+
+}
+
+</script>
+
+<script type="text/javascript" src="./src/main.js"></script>
+
+</body>
+</html>
